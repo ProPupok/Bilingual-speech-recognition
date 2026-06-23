@@ -31,12 +31,12 @@ cd Bilingual-speech-recognition
 
 Firstly, delete previous containers if existed:
 ```bash
-docker rm -v pg-container
+docker rm -f pg-container
 ```
 
 Run this command to start and deploy Docker in the background:
 ```bash
-docker run -d --name pg-container -e POSTGRES_PASSWORD=admin -p 15432:5432 postgres
+docker run -d --name pg-container -v db_storage:/var/lib/postgresql -e POSTGRES_PASSWORD=admin -p 15432:5432 postgres
 ```
 
 ### 3. Run the Backend (FastAPI)
@@ -48,18 +48,31 @@ docker run -d --name pg-container -e POSTGRES_PASSWORD=admin -p 15432:5432 postg
 > source .venv/bin/activate
 > ```
 
-Install dependencies and start the API development server:
+Install dependencies:
 
 ```bash
 pip install -r backend/requirements.txt
-python -m uvicorn backend.src.main:app --port 8000 --host 0.0.0.0 --reload
+```
+
+Then, start the API backend server via uvicorn:
+
+```bash
+uvicorn backend.src.main:app --port 8000 --host 0.0.0.0 --reload
 ```
 
 Interactive API Docs:
 * ```http://localhost:8000/docs``` if deployed locally
 * ```http://<YOUR-IP-ADDRESS>:8000/docs``` if deployed on VM
 
-> **Troubleshooting**: If the backend has frozen after reload, type ```taskkill /F /IM python.exe``` and run the backend again.
+> **Troubleshooting**:
+>
+> 1. If you have an error while trying to start the server, try
+>
+> ```bash
+> python -m uvicorn backend.src.main:app --port 8000 --host 0.0.0.0 --reload
+> ```
+>
+> 2. If the backend has frozen after reload, type ```taskkill /F /IM python.exe``` and run the backend again.
 
 ### 4. Run the Frontend (Node.js)
 Open a new terminal window. Now install package dependencies and start the server:
