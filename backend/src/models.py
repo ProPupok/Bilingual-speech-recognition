@@ -1,11 +1,28 @@
 from datetime import datetime
 from uuid import uuid4
 from sqlalchemy import (
-    Column, String, DateTime, Integer, Float, Text, ForeignKey, Index
+    Column, String, DateTime, Integer, Float, Text, ForeignKey, Index, Enum
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import relationship
 from backend.src.database import Base
+import enum
+
+class UserRole(str, enum.Enum):
+    USER = "user"
+    MANAGER = "manager"
+    ADMIN = "admin"
+
+
+class User(Base):
+    """Модель пользователя только для авторизации и проверки прав."""
+    __tablename__ = "users"
+
+    id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    role = Column(Enum(UserRole), default=UserRole.USER, nullable=False)
+    created_at = Column(DateTime, default=datetime.now)
 
 
 class AudioFile(Base):
@@ -18,13 +35,12 @@ class AudioFile(Base):
     filename = Column(String, index=True)
     content_type = Column(String)
     uploaded_at = Column(DateTime, default=datetime.now)
-    recorded_at = Column(DateTime, nullable=True)         # дата записи (US-012)
+    recorded_at = Column(DateTime, nullable=True)
     folder_path = Column(String, nullable=False)
 
     primary_language = Column(String, nullable=True)
     status = Column(String, default="done")              # queued/processing/done/error
 
-    # метрики транскрипции (US-006: статистика)
     duration_sec = Column(Float, nullable=True)
     speech_sec = Column(Float, nullable=True)
     silence_removed_sec = Column(Float, nullable=True)
@@ -63,11 +79,11 @@ class Word(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     audio_id = Column(PG_UUID(as_uuid=True), ForeignKey("audio_files.id", ondelete="CASCADE"), index=True)
     text = Column(String, index=True)
-    start_sec = Column(Float)          # координаты ОРИГИНАЛА (транскрипция по оригиналу)
+    start_sec = Column(Float)
     end_sec = Column(Float)
     language = Column(String, index=True)  # 'ru' / 'tt' / 'unknown'
     confidence = Column(Float)
-    position = Column(Integer)          # порядковый номер слова в аудио
+    position = Column(Integer)
 
     audio = relationship("AudioFile", back_populates="words")
 

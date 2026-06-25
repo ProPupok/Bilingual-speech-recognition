@@ -1,6 +1,8 @@
 from datetime import datetime
-from uuid import UUID  # Тот же самый класс UUID
-from pydantic import BaseModel, ConfigDict
+from uuid import UUID
+from pydantic import BaseModel, ConfigDict, Field
+
+from backend.src.models import UserRole
 
 class AudioFileResponse(BaseModel):
     id: UUID
@@ -19,3 +21,28 @@ class AudioWithTextResponse(BaseModel):
 
 class UpdateTranscriptionRequest(BaseModel):
     transcription_text: str
+
+
+class UserCreate(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50, description="Имя пользователя")
+    password: str = Field(..., min_length=6, description="Пароль минимум 6 символов")
+    # Используем UserRole вместо str. Pydantic сам проверит валидность роли.
+    role: UserRole = Field(default=UserRole.USER, description="Уровень доступа: user, manager, admin")
+
+class UserResponse(BaseModel):
+    id: UUID
+    username: str
+    role: UserRole
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+class ChangePasswordRequest(BaseModel):
+    new_password: str = Field(..., min_length=6, description="Новый пароль, минимум 6 символов")

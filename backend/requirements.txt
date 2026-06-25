@@ -1,6 +1,5 @@
 # Backend dependencies
 
-fastapi
 uvicorn
 pydantic
 python-multipart          # обработка multipart/form-data (загрузка аудио)
@@ -12,5 +11,8 @@ psycopg[binary]           # драйвер PostgreSQL (postgresql+psycopg)
 faster-whisper
 numpy
 
+fastapi[all]
+pwdlib[bcrypt]
+python-jose[JWT]
 # Опционально: точнее определять русские слова при тегировании языка (lang_tag).
 # pymorphy3
