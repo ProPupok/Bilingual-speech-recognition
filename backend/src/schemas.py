@@ -44,33 +44,12 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: str | None = None
 
+
 class ChangePasswordRequest(BaseModel):
-    old_password: str = Field(
-        ..., min_length=4, description="Старый пароль"
-    )
+    old_password: str = Field(..., min_length=4, description="Старый пароль")
     new_password: str = Field(
-        ...,
-        min_length=4,
-        description="Новый пароль, минимум 4 символа",
+        ..., min_length=4, description="Новый пароль, минимум 4 символа"
     )
     confirm_password: str = Field(
-        ...,
-        min_length=4,
-        description="Подтверждение нового пароля",
+        ..., min_length=4, description="Подтверждение нового пароля"
     )
-
-    @model_validator(mode="after")
-    def validate_passwords(self) -> "ChangePasswordRequest":
-        # 1. Проверяем совпадение нового пароля и подтверждения
-        if self.new_password != self.confirm_password:
-            raise ValueError(
-                "Новый пароль и подтверждение не совпадают"
-            )
-
-        # 2. Проверяем, что новый пароль изменен
-        if self.old_password == self.new_password:
-            raise ValueError(
-                "Новый пароль не должен совпадать со старым"
-            )
-
-        return self

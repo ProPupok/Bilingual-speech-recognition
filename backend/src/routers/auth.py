@@ -12,25 +12,37 @@ from backend.src import models, schemas
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
+
 @router.post("/change-password", status_code=status.HTTP_200_OK)
 async def change_my_password(
-        payload: ChangePasswordRequest,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+    payload: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    """Пользователь меняет свой собственный пароль."""
-    # 1. Проверяем, правильный ли старый пароль
+
+    if payload.new_password != payload.confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Новый пароль и подтверждение не совпадают",
+        )
+
+    if payload.old_password == payload.new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Новый пароль не должен совпадать с текущим",
+        )
+
     if not verify_password(payload.old_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Неверный старый пароль"
+            detail="Неверный текущий пароль",
         )
 
-    # 2. Хешируем и сохраняем новый пароль
     current_user.hashed_password = hash_password(payload.new_password)
 
     db.commit()
     return {"status": "success", "message": "Ваш пароль успешно изменен"}
+
 
 # @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 # def register(user_in: UserCreate, db: Session = Depends(get_db)):
