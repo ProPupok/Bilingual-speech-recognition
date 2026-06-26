@@ -4,4 +4,5 @@
 /backend/src/routers/__pycache__/
 /backend/src/services/__pycache__/
 /node_modules/
+/spkrec_ecapa/
 .env
