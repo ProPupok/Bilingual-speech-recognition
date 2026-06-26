@@ -46,16 +46,16 @@ class TokenData(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     old_password: str = Field(
-        ..., min_length=6, description="Старый пароль"
+        ..., min_length=4, description="Старый пароль"
     )
     new_password: str = Field(
         ...,
-        min_length=6,
-        description="Новый пароль, минимум 6 символов",
+        min_length=4,
+        description="Новый пароль, минимум 4 символа",
     )
     confirm_password: str = Field(
         ...,
-        min_length=6,
+        min_length=4,
         description="Подтверждение нового пароля",
     )
 
