@@ -15,19 +15,18 @@ jobs:
           script: |
             const prBody = context.payload.pull_request.body || "";
             
-            // Issue link check
+            // 1. Validate Issue Link
             const issueRegex = /(closes|fixes|resolves|close|fix|resolve)\s+#\d+/i;
             if (!issueRegex.test(prBody)) {
-              core.setFailed("Ошибка: Не найдена связь с задачей! Добавьте 'Closes #номер_issue'.");
+              core.setFailed("Validation Failed: Missing required issue linkage. Please add 'Closes #issue_number'.");
               return;
             }
-            console.log("✅ Связь с Issue успешно найдена.");
+            console.log("Issue linkage validated successfully.");
 
-            // Checking checkboxes
+            // 2. Validate Checkboxes (XOR Rule for Changelog)
             const lines = prBody.split('\n');
             let hasUncheckedBaseTasks = false;
             let changelogSectionStarted = false;
-            
             let changelogCheckedCount = 0;
 
             for (let line of lines) {
@@ -49,13 +48,14 @@ jobs:
             }
 
             if (hasUncheckedBaseTasks) {
-              core.setFailed("Ошибка: Не все обязательные пункты из базового чек-листа были отмечены!");
+              core.setFailed("Validation Failed: One or more required tasks in the main checklist are not completed.");
               return;
             }
-            console.log("All base checkboxes are marked");
+            console.log("All main checklist tasks are completed.");
 
+            // 3. Enforce exactly one option in Changelog
             if (changelogCheckedCount !== 1) {
-              core.setFailed(`Ошибка: В блоке Changelog presence должно быть выбрано РОДНО ОДНО значение (Pick exactly one). Сейчас отмечено пунктов: ${changelogCheckedCount}`);
+              core.setFailed(`Validation Failed: Under 'Changelog presence', you must select exactly one option. Currently checked options: ${changelogCheckedCount}`);
               return;
             }
-            console.log("Only one of two checkboxes was marked");
+            console.log("Changelog selection criteria met successfully.");
