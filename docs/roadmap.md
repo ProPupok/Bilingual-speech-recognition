@@ -20,8 +20,11 @@
 - **Sprint Goal:** Fix the issues of MVP v1 and start working towards MVP v2
 - **Short focus or expected outcome statement:** Finished tasks related to MVP v1 functionality and new features being in development
 - **Linked planned items for that Sprint, such as user stories and supporting PBIs:**
+  -  [US-011: Speakers in transcription](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/15)
   -  [US-014: Login page](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/18)
   -  [US-016: Audio deletion](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/20)
   -  [Proper Tatar ASR (dedicated model) for ru/tt code-switching](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/54)
   -  [Create virtual environment](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/80)
   -  [Change of security protocol](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/103)
+  -  [Russian localization](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/130)
+  -  [Profile account maintenance](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/131)
