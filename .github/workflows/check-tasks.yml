@@ -15,7 +15,16 @@ jobs:
           script: |
             const prBody = context.payload.pull_request.body || "";
             
-            // 1. Validate Issue Link
+            // 1. Validate that the placeholder text has been removed
+            const placeholderText = "Please include a summary of the changes and the related issue. Please also include relevant motivation and context. List any dependencies that are required for this change.";
+            
+            if (prBody.includes(placeholderText)) {
+              core.setFailed("Validation Failed: You must remove the default template placeholder text and replace it with a real detailed description of your changes.");
+              return;
+            }
+            console.log("Placeholder text validation passed.");
+
+            // 2. Validate Issue Link
             const issueRegex = /(closes|fixes|resolves|close|fix|resolve)\s+#\d+/i;
             if (!issueRegex.test(prBody)) {
               core.setFailed("Validation Failed: Missing required issue linkage. Please add 'Closes #issue_number'.");
@@ -23,7 +32,7 @@ jobs:
             }
             console.log("Issue linkage validated successfully.");
 
-            // 2. Validate Checkboxes (XOR Rule for Changelog)
+            // 3. Validate Checkboxes (XOR Rule for Changelog)
             const lines = prBody.split('\n');
             let hasUncheckedBaseTasks = false;
             let changelogSectionStarted = false;
@@ -53,7 +62,7 @@ jobs:
             }
             console.log("All main checklist tasks are completed.");
 
-            // 3. Enforce exactly one option in Changelog
+            // 4. Enforce exactly one option in Changelog
             if (changelogCheckedCount !== 1) {
               core.setFailed(`Validation Failed: Under 'Changelog presence', you must select exactly one option. Currently checked options: ${changelogCheckedCount}`);
               return;
