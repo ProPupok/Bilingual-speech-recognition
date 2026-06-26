@@ -37,10 +37,22 @@ def process_audio(input_path, storage_dir="./storage", audio_id=None,
     proc = audio_process.process_silence(input_path, folder)
     audio = proc["audio"]
 
-    # 2-3. посегментная маршрутизация LID -> ASR -> тег
+    # 2a. диаризация: кто говорит -> метка говорящего на каждый VAD-сегмент.
+    # Опционально (ASR_DIARIZE), мягко (при ошибке speaker=None — пайплайн не падает).
+    seg_speakers = [None] * len(proc["segments"])
+    if os.environ.get("ASR_DIARIZE", "1") == "1":
+        try:
+            from backend.src import diarize
+            idx = diarize.assign_speakers(proc["original_wav"], proc["segments"])
+            seg_speakers = [f"Говорящий {k + 1}" if k is not None else None for k in idx]
+        except Exception:
+            pass
+
+    # 2-3. посегментная маршрутизация LID -> ASR -> тег (+ говорящий сегмента)
     words = []
     win = int(WIN_SEC * SR)
-    for s in proc["segments"]:
+    for si, s in enumerate(proc["segments"]):
+        speaker = seg_speakers[si] if si < len(seg_speakers) else None
         for a in range(s["start_sample"], s["end_sample"], win) or [s["start_sample"]]:
             b = min(a + win, s["end_sample"])
             chunk = audio[a:b].astype("float32")
@@ -60,7 +72,7 @@ def process_audio(input_path, storage_dir="./storage", audio_id=None,
                     "start": round(base_off + w["start"], 3),
                     "end": round(base_off + w["end"], 3),
                     "conf": w["conf"], "lang": lang,
-                    "seg_lang": seg_lang,
+                    "seg_lang": seg_lang, "speaker": speaker,
                     "lang_tuple": (norm, lang),
                 })
 

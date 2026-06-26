@@ -16,6 +16,8 @@ numpy
 torch                   # бэкенд для transformers-моделей (CPU/CUDA)
 transformers            # mms-lid-256 (LID) + yasalma/whisper-finetuned-tt-asr (tt)
 accelerate              # потоковая загрузка весов (меньше пик памяти при load)
+speechbrain             # диаризация: ECAPA speaker-эмбеддинги (spkrec-ecapa-voxceleb)
+scikit-learn            # диаризация: агломеративная кластеризация сегментов
 
 # Модели тянутся из HuggingFace при первом запуске (кэш HF_HOME):
 #   mms-lid-256 ~3.9ГБ (1B!), Whisper-TT ~1ГБ, large-v3 ~1.5ГБ.

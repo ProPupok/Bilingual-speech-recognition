@@ -6,9 +6,26 @@ from collections import Counter
 from backend.src import models
 
 
+def _resolve_speakers(db, words):
+    """Метки говорящих из диаризации ('Говорящий 1'…) -> строки в speakers
+    (get-or-create, глобально по корпусу). Возвращает map метка->id."""
+    labels = {w.get("speaker") for w in words if w.get("speaker")}
+    out = {}
+    for label in labels:
+        sp = db.query(models.Speaker).filter(models.Speaker.label == label).first()
+        if sp is None:
+            sp = models.Speaker(label=label)
+            db.add(sp)
+            db.flush()                          # получить sp.id
+        out[label] = sp.id
+    return out
+
+
 def save_transcription(db, audio_id, words, segments, stats):
-    """words: [{'text','start','end','conf','lang'}]; segments: карта VAD;
+    """words: [{'text','start','end','conf','lang','speaker'?}]; segments: карта VAD;
     stats: dict из audio_process.process_silence()['stats']."""
+
+    spk_map = _resolve_speakers(db, words)
 
     # --- слова (место для всех слов, для поиска) ---
     counter = Counter()
@@ -19,7 +36,7 @@ def save_transcription(db, audio_id, words, segments, stats):
             audio_id=audio_id, text=w["text"], raw=w.get("raw"),
             start_sec=w["start"], end_sec=w["end"], language=w["lang"],
             confidence=w["conf"], position=i,
-            speaker_id=w.get("speaker_id"),     # NULL до шага диаризации
+            speaker_id=spk_map.get(w.get("speaker")),   # NULL если диаризация выкл/не дала метку
         ))
         counter[(w["text"], w["lang"])] += 1
         lang_counter[w["lang"]] += 1
