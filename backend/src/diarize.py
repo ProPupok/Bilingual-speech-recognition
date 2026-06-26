@@ -32,8 +32,8 @@ def assign_speakers(wav_path, segments, sampling_rate: int = SR):
         "wav": wav_path,
         "segments": [[int(s["start_sample"]), int(s["end_sample"])] for s in segments],
         "threshold": float(os.environ.get("DIARIZE_THRESHOLD", "0.72")),
-        # потолок числа говорящих (домен: семейные записи мама/папа -> 2)
-        "max_speakers": int(os.environ.get("DIARIZE_MAX_SPEAKERS", "2")),
+        # потолок числа говорящих (семейные записи: мама/папа/ребёнок -> 3)
+        "max_speakers": int(os.environ.get("DIARIZE_MAX_SPEAKERS", "3")),
     })
     try:
         p = subprocess.run([sys.executable, "-m", "backend.src.diarize"],
