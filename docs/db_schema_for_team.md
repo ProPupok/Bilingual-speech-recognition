@@ -196,6 +196,52 @@ SELECT DISTINCT s.label FROM words w JOIN speakers s ON s.id=w.speaker_id WHERE 
 SELECT text, language, count FROM word_counts WHERE audio_id=:id ORDER BY count DESC LIMIT 20;
 ```
 
+## API: как доставать данные (для фронта/фильтров)
+
+Бэкенд FastAPI, роутер `backend/src/routers/audio.py`. Основные ручки:
+
+| Метод/путь | Зачем | Параметры |
+|---|---|---|
+| `POST /upload-audio/` | загрузить аудио (запускает пайплайн) | form-data `file` |
+| **`GET /search/`** | **поиск с фильтрами** (см. ниже) | `q, lang, speaker, date_from, date_to` |
+| `GET /audio/` | список всех записей (метаданные/метрики) | — |
+| `GET /audio/{id}?type=original` | скачать ОРИГИНАЛ аудио | `type=original` |
+| `GET /audio/{id}?type=processed` | скачать ОБРЕЗАННОЕ (trimmed) аудио | `type=processed` |
+| `GET /transcriptions/` | список транскриптов (id, filename, текст) | — |
+| `GET /transcriptions/{id}` | полный транскрипт: `words[]` + текст | — |
+| `PATCH /transcriptions/{id}` | отредактировать текст транскрипта | json `transcription_text` |
+| `DELETE /audio/{id}` | удалить запись + файлы | — |
+
+### Поиск с фильтрами — `GET /search/`
+Все параметры необязательны, комбинируются (дата · слово · говорящий · язык):
+```
+GET /search/?q=станция&lang=ru&speaker=мама&date_from=2026-06-01&date_to=2026-07-01
+```
+Ответ — список вхождений:
+```json
+[
+  { "audio_id":"3f2b...","text":"станция","raw":"станция,","language":"ru",
+    "start_sec":4.12,"end_sec":4.63,"confidence":0.91,
+    "speaker":"мама","recorded_at":"2026-06-20T18:30:00" }
+]
+```
+`start_sec` → переход к слову в плеере; `audio_id` → подтянуть запись/аудио.
+Примечание: `speaker` фильтрует только после шага диаризации (пока `speaker_id`=NULL);
+`date_from/to` — после того как при загрузке проставляется `recorded_at`.
+
+### Trimmed (обрезанное) аудио — где и как взять
+- Файл: `storage/<audio_id>/processed.wav` (пишется пайплайном, без длинных пауз).
+- В БД отдельной колонки под путь НЕТ — путь = `audio_files.folder_path` + `processed.wav`
+  (оригинал = `original<ext>`, транскрипт = `transcription.json/.txt`).
+- Скачать: `GET /audio/{id}?type=processed` (оригинал — `type=original`).
+  Если захотите явные колонки путей — можно добавить, но `folder_path`+имя достаточно.
+
+### Нужно ли что-то добавлять в БД?
+Для фильтров дата/слово/говорящий/язык схема **достаточна**: `recorded_at` (дата),
+`words.text` (слово), `words.language` (язык), `speakers`+`words.speaker_id` (говорящий)
+уже есть. Доп. таблицы не требуются. Осталось только ЗАПОЛНЯТЬ `recorded_at` и
+`speaker_id` (см. ниже).
+
 ## Что ещё не заполняется (TODO в пайплайне)
 - `recorded_at` — прокинуть из формы загрузки.
 - `speaker_id` / `speakers` — нужен шаг **диаризации** (кто говорит); до него NULL.

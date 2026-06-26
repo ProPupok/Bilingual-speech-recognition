@@ -58,15 +58,35 @@ async def upload_audio(file: UploadFile = File(...), db: Session = Depends(get_d
 
 
 @router.get("/search/")
-async def search_words(q: str, lang: str = None, db: Session = Depends(get_db)):
-    """Поиск слова по корпусу: где встречается + таймкод оригинала (для перехода)."""
-    query = db.query(models.Word).filter(models.Word.text == q.strip().lower())
+async def search_words(q: str = None, lang: str = None, speaker: str = None,
+                       date_from: str = None, date_to: str = None,
+                       db: Session = Depends(get_db)):
+    """Поиск по корпусу с фильтрами (все необязательны):
+      q         — слово (точное совпадение нормализованного text);
+      lang      — 'ru' / 'tt';
+      speaker   — метка говорящего (мама/папа); работает после диаризации;
+      date_from / date_to — диапазон по дате записи (recorded_at, ISO 'YYYY-MM-DD').
+    Возвращает вхождения слова + таймкод оригинала (для перехода в плеере)."""
+    query = (db.query(models.Word)
+             .join(models.AudioFile, models.AudioFile.id == models.Word.audio_id))
+    if q:
+        query = query.filter(models.Word.text == q.strip().lower())
     if lang:
         query = query.filter(models.Word.language == lang)
+    if speaker:
+        query = (query.join(models.Speaker, models.Speaker.id == models.Word.speaker_id)
+                 .filter(models.Speaker.label == speaker))
+    if date_from:
+        query = query.filter(models.AudioFile.recorded_at >= date_from)
+    if date_to:
+        query = query.filter(models.AudioFile.recorded_at < date_to)
     hits = query.all()
     return [{
-        "audio_id": str(h.audio_id), "text": h.text, "language": h.language,
-        "start_sec": h.start_sec, "end_sec": h.end_sec, "confidence": h.confidence,
+        "audio_id": str(h.audio_id), "text": h.text, "raw": h.raw,
+        "language": h.language, "start_sec": h.start_sec, "end_sec": h.end_sec,
+        "confidence": h.confidence,
+        "speaker": h.speaker.label if h.speaker else None,
+        "recorded_at": h.audio.recorded_at.isoformat() if h.audio and h.audio.recorded_at else None,
     } for h in hits]
 
 
