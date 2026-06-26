@@ -78,7 +78,7 @@ function TranscriptionBox({ transcriptionText, transcriptionWords, audioName }) 
               key={index}
               style={{ color: word.lang === 'tt' ? '#009a55' : '#333' }}
             >
-              {word.text}{index < transcriptionWords.length - 1 ? ' ' : ''}
+              {word.raw || word.text}{index < transcriptionWords.length - 1 ? ' ' : ''}
             </span>
           ))
         ) : (
