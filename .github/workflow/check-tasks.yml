@@ -2,28 +2,60 @@ name: "Check PR Tasks and Issue Linking"
 
 on:
   pull_request:
+    branches: [ "main" ]
     types: [opened, edited, synchronize, reopened]
 
 jobs:
   validate-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if all markdown tasks are completed
-        uses: stilliard/github-task-list-completed@v0.0.7
-
-      - name: Verify Issue Linking (closes #something)
+      - name: Validate PR Description, Checkboxes, and Changelog Rules
         uses: actions/github-script@v7
         with:
           script: |
             const prBody = context.payload.pull_request.body || "";
             
-            // Регулярное выражение ищет слова closes/fixes/resolves/close/fix/resolve, за которыми следует # и цифры
+            // Issue link check
             const issueRegex = /(closes|fixes|resolves|close|fix|resolve)\s+#\d+/i;
-            
             if (!issueRegex.test(prBody)) {
-              core.setFailed(
-                "Ошибка: В описании Pull Request обязательно должно быть указано ключевое слово для закрытия задачи, например: 'closes #12', 'fixes #45' или 'resolves #101'."
-              );
-            } else {
-              console.log("Успешно: Найдена корректная связь с issue!");
+              core.setFailed("Ошибка: Не найдена связь с задачей! Добавьте 'Closes #номер_issue'.");
+              return;
             }
+            console.log("✅ Связь с Issue успешно найдена.");
+
+            // Checking checkboxes
+            const lines = prBody.split('\n');
+            let hasUncheckedBaseTasks = false;
+            let changelogSectionStarted = false;
+            
+            let changelogCheckedCount = 0;
+
+            for (let line of lines) {
+              const trimmed = line.trim();
+              
+              if (trimmed.toLowerCase().includes("changelog presence")) {
+                changelogSectionStarted = true;
+              }
+
+              if (!changelogSectionStarted) {
+                if (trimmed.startsWith("- [ ]")) {
+                  hasUncheckedBaseTasks = true;
+                }
+              } else {
+                if (trimmed.startsWith("- [x]") || trimmed.startsWith("- [X]")) {
+                  changelogCheckedCount++;
+                }
+              }
+            }
+
+            if (hasUncheckedBaseTasks) {
+              core.setFailed("Ошибка: Не все обязательные пункты из базового чек-листа были отмечены!");
+              return;
+            }
+            console.log("All base checkboxes are marked");
+
+            if (changelogCheckedCount !== 1) {
+              core.setFailed(`Ошибка: В блоке Changelog presence должно быть выбрано РОДНО ОДНО значение (Pick exactly one). Сейчас отмечено пунктов: ${changelogCheckedCount}`);
+              return;
+            }
+            console.log("Only one of two checkboxes was marked");
