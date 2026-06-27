@@ -110,12 +110,12 @@ Platform dependency manifests are dynamically checked against current security v
 - [Definition of Done](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/definition-of-done.md)
 - [Quality Requirements](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/quality-requirements.md)
 - [Quality Requirement Tests Document](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/quality-requirements-tests.md)
-- [Testing Document](docs/testing.md)
+- [Testing Document](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/testing.md)
 - [User Acceptance Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/user-acceptance-tests.md)
-- [Unit Tests](scripts/Unit)
-- [Integration Tests](scripts/Integration)
-- [Automated Quality Requirement Tests](scripts/QualityRequirements)
-- [CI Pipeline](.github/workflows/quality-requirements-tests.yml)
+- [Unit Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/scripts/Unit)
+- [Integration Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/scripts/Integration)
+- [Automated Quality Requirement Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/scripts/QualityRequirements)
+- [CI Pipeline](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/.github/workflows/quality-requirements-tests.yml)
 - [Latest Protected-Default-Branch CI Run](...) [INSERT LINK]
 
 ## Customer Meeting
