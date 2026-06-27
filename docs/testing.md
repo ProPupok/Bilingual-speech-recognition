@@ -2,8 +2,6 @@
 
 ## Critical Modules and Coverage
 
-The repository maintains a strict quality gate requiring a **minimum of 30% automated line coverage** for each critical module. Global repository coverage is at **47%** (`857` total statements, `456` missed statements).
-
 | Critical module | Why critical | Required line coverage | Current line coverage | Evidence |
 | :--- | :--- | ---: | ---: | :--- |
 | `backend/src/pipeline.py` | Coordinates the core mixed ASR routing logic, speech processing pipelines, and text delivery workflows. | 30% | 71% | [CI Run](https://github.com) |
