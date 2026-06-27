@@ -1,9 +1,5 @@
 # Testing
 
-This document is the canonical testing status artifact for the repository in accordance with the Assignment 4 process requirements.
-
----
-
 ## Critical Modules and Coverage
 
 The repository maintains a strict quality gate requiring a **minimum of 30% automated line coverage** for each critical module. Global repository coverage is at **47%** (`857` total statements, `456` missed statements).
