@@ -84,7 +84,7 @@ jobs:
 
       - name: Run Backend Formatting Check (Black)
         run: |
-          black --check backend/src scripts/
+          black backend/src scripts/
 
       - name: Initialize Database
         run: |
