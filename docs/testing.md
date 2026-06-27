@@ -1,4 +1,4 @@
-# Testing and Quality Assurance Status
+# Testing
 
 This document is the canonical testing status artifact for the repository in accordance with the Assignment 4 process requirements.
 
