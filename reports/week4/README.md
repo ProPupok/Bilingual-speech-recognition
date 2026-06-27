@@ -86,7 +86,7 @@ We will still work on speech recognition, which means there will be some changes
 
 ### Latest Protected-Default-Branch CI Run
 
-[ADD LATEST PROTECTED-DEFAULT-BRANCH CI RUN SCREENSHOT]
+![Test Results](images/ci-run.png)
 
 ### Default Branch Protection Evidence
 
@@ -103,7 +103,7 @@ Critical modules (`pipeline.py`, `text_filter.py`, `services/auth.py`, `routers/
 
 Platform dependency manifests are dynamically checked against current security vulnerability directories.
 
-[ADD ADDITIONAL QA CHECK RESULT SCREENSHOT]
+![Test Results](images/additional-qa.png)
 
 ### Links
 
@@ -116,7 +116,7 @@ Platform dependency manifests are dynamically checked against current security v
 - [Integration Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/scripts/Integration)
 - [Automated Quality Requirement Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/scripts/QualityRequirements)
 - [CI Pipeline](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/.github/workflows/quality-requirements-tests.yml)
-- [Latest Protected-Default-Branch CI Run](...) [INSERT LINK]
+- [Latest Protected-Default-Branch CI Run](https://github.com/SWP-Team20/Bilingual-speech-recognition/actions/runs/28302441842/job/83853012352)
 
 ## Customer Meeting
 
