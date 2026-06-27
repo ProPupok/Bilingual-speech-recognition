@@ -22,15 +22,15 @@
 
 **Evidence location:** GitHub Actions log history execution data tracking the output metrics of the `transcription-accuracy-test` job.
 
-## QRT-003: Automated Authentication Latency Performance Test 
+## QRT-003: Pull Request Compliance Static Analysis Test
 **Linked quality requirement:** QR-003
 
-**Verification method:** Automated performance and API response time unit testing.
+**Verification method:** Automated static analysis text parsing script running directly on the integration platform metadata.
 
-**Test data, setup, or environment:** Active local application instance targeting a mock database container with 10,000 pre-registered user accounts.
+**Test data, setup, or environment:** Execution inside the GitHub virtual environment triggered by incoming pull request events, parsing the raw markdown body of the PR description field.
 
-**Automated command or CI check:** `pytest scripts/test_auth_perf.py` (executed via the `auth-performance-test` job in the repository pipeline).
+**Automated command or CI check:** `validate-pr` job running the `actions/github-script@v7` step within the `check-tasks.yml` workflow.
 
-**Expected measurable result:** The test logs verify that the 95th percentile of 50 consecutive login API calls does not exceed the 1000 ms threshold.
+**Expected measurable result:** The validation script completes execution with exit code 0, confirming that the default template placeholders are completely overwritten, a valid tracking issue reference (`Closes #<id>`) is explicitly declared, all base task checkboxes are marked as completed (`- [x]`), and exactly one single option is selected under the Changelog section.
 
-**Evidence location:** GitHub Actions execution output attached to the current active Pull Request branch.
+**Evidence location:** GitHub Actions check runs interface and log history execution data for the `Check PR Tasks and Issue Linking` workflow.

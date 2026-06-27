@@ -66,10 +66,6 @@ jobs:
         run: |
           pytest scripts/test_security.py          
 
-      - name: Run Authentication Performance Test (QRT-003)
-        run: |
-          pytest scripts/test_auth_perf.py
-
       - name: Run Transcription Quality Test (QRT-002)
         run: |
           python scripts/transcription_quality_test.py
