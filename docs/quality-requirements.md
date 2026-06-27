@@ -9,14 +9,14 @@
 
 **Linked quality requirement tests:** [QRT-001](quality-requirements-tests.md#qrt-001-unauthorized-audio-access-verification)
 
-## QR-002: Transcription Accuracy and Correctness
-**ISO/IEC 25010 sub-characteristic:** 
+## QR-002: Front-End Code and Build Quality
+**ISO/IEC 25010 sub-characteristic:** Maintainability 
 
-**Why this matters:** 
+**Why this matters:** Unchecked linter errors and broken production builds slow down development, introduce UI bugs, and block deployment pipelines. Ensuring code compliance before merging maintains repository health.
 
-**Scenario:** 
+**Scenario:** When a developer pushes code to the repository or opens a Pull Request, the CI system shall execute static analysis and compilation checks, requiring zero errors and a successful production build.
 
-**Linked quality requirement tests:** 
+**Linked quality requirement tests:** [QRT-002](quality-requirements-tests.md#qrt-002-front-end-production-build-and-code-quality-verification)
 
 ## QR-003: Pull Request Quality and Compliance Check
 **ISO/IEC 25010 sub-characteristic:** Maintainability
