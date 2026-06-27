@@ -122,22 +122,32 @@ Platform dependency manifests are dynamically checked against current security v
 
 ### UAT Results Summary
 
-[INSERT DESCRIPTION]
+As client could not have get access to product, as they were not connected to university network, UAT were conducted on one of the team members' computer with guidance of client.
+
+Three scenario were presented:
+
+- Getting and verifying audio transcription,
+- Deleting an audio,
+- Changing the password to secure profile.
+
+All three passed and marked by client as successful.
 
 ### Links
 
-- [Customer Review Transcript](...) [INSERT LINK]
-- [Customer Review Summary](...) [INSERT LINK]
+- [Customer Review Transcript](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/reports/week4/customer-review-transcript.md)
+- [Customer Review Summary](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/reports/week4/customer-review-summary.md)
 
 ## Product Development Perspectives
 
 ### Current Product Status
 
-[INSERT DESCRIPTION]
+Project contains all core function excluding filtering and statistics information. Product works well, all tests are passed and client is satisfied. Development speed increased, as in comparison to the previous week.
 
 ### Next Steps
 
-[INSERT DESCRIPTION]
+- Wait for source audio file from KFU and train model by it;
+- Start working on filtering and audio modifications;
+- Plan statistics, present visuals.
 
 ### Contribution Traceability Table
 
