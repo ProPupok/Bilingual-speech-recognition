@@ -3,10 +3,9 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import models
-from database import SessionLocal, engine, Base
-from services.auth import hash_password
-
+from backend.src.database import SessionLocal, engine, Base
+from backend.src.services.auth import hash_password
+from backend.src import models
 
 def create_initial_admin():
     Base.metadata.create_all(bind=engine)
