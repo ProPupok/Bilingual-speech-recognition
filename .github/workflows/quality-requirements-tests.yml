@@ -31,7 +31,7 @@ jobs:
 
   backend-quality-tests:
     needs: changes
-    if: github.event_name == 'push' || needs.changes.outputs.backend == 'true'
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
 
     services:
@@ -74,7 +74,6 @@ jobs:
           pip install -r backend/requirements.txt
           pip install pytest pytest-cov httpx psycopg2-binary uvicorn fastapi pip-audit
 
-      # Additional QA Test for backend
       - name: Run Backend Dependency Vulnerability Scan (Additional QA Check)
         run: |
           pip-audit
@@ -93,18 +92,13 @@ jobs:
           done
           echo "FastAPI is ready!"
 
-      # Unit tests
-      - name: Run Automated Unit and Integration Tests with Coverage
+      - name: Run All Automated Tests with Line Coverage (Unit, Integration, QRT)
         run: |
           pytest --cov=backend/src scripts/ --cov-report=term-missing
 
-      - name: Run Transcription Quality Test (QRT-002)
-        run: |
-          python scripts/transcription_quality_test.py
-
   frontend-quality-check:
     needs: changes
-    if: github.event_name == 'push' || needs.changes.outputs.frontend == 'true'
+    if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project source
@@ -122,7 +116,6 @@ jobs:
         run: |
           npm ci
 
-      # Additional QA Check for frontend
       - name: Run Frontend Dependency Audit (Additional QA Check)
         working-directory: ./frontend
         run: |
