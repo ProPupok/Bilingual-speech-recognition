@@ -34,7 +34,3 @@ def create_initial_admin():
         print(f"Ошибка при инициализации базы данных: {e}")
     finally:
         db.close()
-
-
-if __name__ == "__main__":
-    create_initial_admin()
