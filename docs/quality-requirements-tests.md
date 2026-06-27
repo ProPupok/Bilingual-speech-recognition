@@ -7,7 +7,7 @@
 
 **Test data, setup, or environment:** CI testing environment containing at least one protected audio file resource with a known endpoint.
 
-**Automated command or CI check:** `pytest scripts/test_security.py` (executed during the `backend-quality-tests` job within the `quality-requirements-tests.yml` workflow).
+**Automated command or CI check:** `pytest scripts/QualityRequirements/test_security.py` (executed during the `backend-quality-tests` job within the `quality-requirements-tests.yml` workflow).
 
 **Expected measurable result:** The test suite exits with code 0 if the server explicitly rejects unauthenticated requests with an HTTP 401 status.
 
