@@ -59,7 +59,7 @@ jobs:
         run: |
           uvicorn backend.src.main:app --port 8000 --host 0.0.0.0 &
           echo "Waiting for FastAPI to start..."
-          until $(curl --output /dev/null --silent --head --fail http://localhost:8000); do
+          until $(curl --output /dev/null --silent --head --fail http://localhost:8000/docs); do
             printf '.'
             sleep 1
           done
