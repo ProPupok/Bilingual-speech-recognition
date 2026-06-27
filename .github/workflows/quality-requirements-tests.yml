@@ -50,7 +50,7 @@ jobs:
 
       - name: Initialize Database (Create Admin)
         run: |
-          python backend/src/init_db.py
+          python init_db.py
 
       - name: Start FastAPI Application
         run: |
