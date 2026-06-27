@@ -65,7 +65,7 @@ Authentification, roles separation, transcription improvement, localization.
 - [Deployed Product](https://10.93.26.206:5173/)
 - [Demo Video of Release](...) [INSERT LINK]
 - [Deployment Insctructions](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/deployment.md)
-- [LLM Report](...) [INSERT LINK]
+- [LLM Report](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/reports/week4/llm-report.md)
 
 ## Testing
 
