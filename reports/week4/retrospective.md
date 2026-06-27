@@ -16,5 +16,5 @@
 
 ## Concrete process improvements for the next Sprint
 
-- Set up a mid-Sprint check to spot delayed tasks early and redistribute the load if needed
-Make sure everyone realistically estimates their capacity during Sprint planning to avoid shifting work later
+- Set up a mid-Sprint check to spot delayed tasks early and redistribute the load if needed.
+- Make sure everyone realistically estimates their capacity during Sprint planning to avoid shifting work later
