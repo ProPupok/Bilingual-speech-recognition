@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 from backend.src.main import app
 
-from init_db import main as initialize_database
+from init_db import create_initial_admin as initialize_database
 
 client = TestClient(app)
 
@@ -30,7 +30,8 @@ def test_login_endpoint_performance():
     }
 
     start_time = time.perf_counter()
-    response = client.post("/api/v1/auth/token", data=login_data)
+    # response = client.post("/api/v1/auth/token", data=login_data)
+    response = client.post("/api/v1/auth/login", data=login_data)
     execution_time = time.perf_counter() - start_time
 
     assert response.status_code == 200, f"Авторизация созданного админа провалилась: {response.text}"

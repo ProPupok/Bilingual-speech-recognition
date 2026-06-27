@@ -48,7 +48,7 @@ SR = 16000
 WIN_SEC = int(os.environ.get("ASR_WINDOW_SEC", "25"))
 SRC_ROOT = r"D:\swp\test audios + transcriptions"
 OUT_DIR = os.path.join(SRC_ROOT, "_results")
-ASCII_DIR = os.path.join(os.environ.get("TEMP", "."), "ru_tt_ascii")
+ASCII_DIR = os.path.join(os.environ.get("TEMP", ".."), "ru_tt_ascii")
 
 
 def process_file(src_path):

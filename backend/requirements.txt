@@ -1,33 +1,37 @@
-# Backend dependencies
-
+# =====================================================================
+# Core Backend Dependencies
+# =====================================================================
+fastapi[all]
 uvicorn
 pydantic
 python-multipart          # обработка multipart/form-data (загрузка аудио)
 sqlalchemy
 psycopg[binary]           # драйвер PostgreSQL (postgresql+psycopg)
 
-# Аудио + ASR. faster-whisper тянет PyAV (декод аудио, системный ffmpeg НЕ нужен),
-# onnxruntime и встроенный Silero VAD. numpy — операции с аудио-массивами.
-faster-whisper          # русская ветка (Whisper large-v3) + VAD
-numpy
-
-# --- авторизация (ветка 18-login-page) ---
-fastapi[all]
+# =====================================================================
+# Authentication & Security
+# =====================================================================
 pwdlib[bcrypt]
 python-jose[JWT]
 
-# --- mixed-пайплайн ru/tt: аудио-LID (mms-lid-256) и татарская Whisper-ASR ---
-torch                   # бэкенд для transformers-моделей (CPU/CUDA)
-transformers            # mms-lid-256 (LID) + yasalma/whisper-finetuned-tt-asr (tt)
-accelerate              # потоковая загрузка весов (меньше пик памяти при load)
-speechbrain             # диаризация: ECAPA speaker-эмбеддинги (spkrec-ecapa-voxceleb)
-scikit-learn            # диаризация: агломеративная кластеризация сегментов
+# =====================================================================
+# Audio, ML & ASR Toolchain
+# =====================================================================
+faster-whisper            # русская ветка (Whisper large-v3) + VAD
+numpy
+torch                     # бэкенд для transformers-моделей (CPU/CUDA)
+transformers              # mms-lid-256 (LID) + yasalma/whisper-finetuned-tt-asr (tt)
+accelerate                # потоковая загрузка весов (меньше пик памяти при load)
+speechbrain               # диаризация: ECAPA speaker-эмбеддинги
+scikit-learn              # диаризация: агломеративная кластеризация сегментов
+pymorphy3                 # опционально: точнее определять русские слова (lang_tag)
 
-# Модели тянутся из HuggingFace при первом запуске (кэш HF_HOME):
-#   mms-lid-256 ~3.9ГБ (1B!), Whisper-TT ~1ГБ, large-v3 ~1.5ГБ.
-# ТРЕБОВАНИЕ ПАМЯТИ: держать ВСЕ три резидентно — нужно >=6-8ГБ СВОБОДНОЙ RAM,
-# иначе чтение mmap-весов падает нативным крашем (access violation). Без GPU
-# работает, но медленно — см. docs/ru_tt_pipeline.md. Загрузка весов синхронная
-# (HF_DEACTIVATE_ASYNC_LOAD=1, ставится в коде) — на Windows многопоточная даёт краш.
-# Опционально: точнее определять русские слова при тегировании языка (lang_tag).
-# pymorphy3
+# =====================================================================
+# CI/CD Quality and Testing Automation (Required for Assignment 4)
+# =====================================================================
+pytest                    # Фреймворк тестирования
+pytest-cov                # Инструмент замера покрытия строк (Line Coverage)
+httpx                     # HTTP-клиент для интеграционных тестов FastAPI
+pip-audit                 # Проверка уязвимостей (Additional QA Check)
+ruff                      # Высокопроизводительный линтер (Source-code linting)
+black                     # Автоматическое форматирование кода (Formatting check)

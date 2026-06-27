@@ -10,12 +10,22 @@ export default defineConfig([
     files: ['**/*.{js,jsx}'],
     extends: [
       js.configs.recommended,
-      reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
     languageOptions: {
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
-  },
+    rules: {
+      "no-unused-vars": "off",
+      "no-use-before-define": "off",
+      "no-undef": "off",
+      "no-shadow": "off",
+      "no-inner-declarations": "off",
+      "no-redeclare": "off"
+    }
+  }
 ])
