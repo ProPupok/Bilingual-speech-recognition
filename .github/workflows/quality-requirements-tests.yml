@@ -32,6 +32,7 @@ jobs:
       DB_USER: test_user
       DB_PASSWORD: test_password
       DB_NAME: test_db
+      PYTHONPATH: .
 
     steps:
       - name: Checkout project source
@@ -45,10 +46,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt update && apt install python3-venv -y
-          python3 -m venv venv
-          source venv/bin/activate
+          python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
+          pip install pytest httpx psycopg2-binary uvicorn fastapi
 
       - name: Initialize Database (Create Admin)
         run: |
