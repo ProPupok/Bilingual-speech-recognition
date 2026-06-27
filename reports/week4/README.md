@@ -147,5 +147,5 @@ Authentification, roles separation, transcription improvement, localization.
 
 ### Links
 
-- [Reflection](...) [INSERT LINK]
+- [Reflection](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/reports/week4/reflection.md)
 - [Retrospective](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/reports/week4/retrospective.md)
