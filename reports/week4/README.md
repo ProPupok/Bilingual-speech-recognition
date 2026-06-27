@@ -71,15 +71,18 @@ Authentification, roles separation, transcription improvement, localization.
 
 ### Summary of the quality model used and selected ISO/IEC 25010 sub-characteristics
 
-[INSERT DESCRIPTION]
+* **Confidentiality:** Enforced by validating that data stores and direct endpoints containing protected user audio binary files strictly reject unauthenticated actions.
+* **Maintainability:** Enforced by applying static analyses, structural format consistency rules, automated line coverage limits, and strict Pull Request template compliance verification before code integrations.
+
 
 ### Testing status summary
 
-[INSERT DESCRIPTION]
+All the tests for critical modules were passed. The backend tests, achieved a coverage of **47%**. Static syntax quality and platform package vulnerability baselines are continuously verified for both stacks. Manual system validations ensure smooth end-to-end client token caching and file ingestion flows.
+
 
 ### Perspective of tests in the project
 
-[INSERT DESCRIPTION]
+We will still work on speech recognition, which means there will be some changes in these modules: `pipeline.py`, `text_filter.py`, `services/auth.py`, `routers/auth.py`. These tests will help to maintain further development.
 
 ### Latest Protected-Default-Branch CI Run
 
@@ -87,13 +90,18 @@ Authentification, roles separation, transcription improvement, localization.
 
 ### Default Branch Protection Evidence
 
-[ADD DEFAULT BRANCH PROTECTION OR RULES SCREENSHOT]
+![Ruleset-1](images/rule-set-1.png)
+![Ruleset-2](images/rule-set-2.png)
 
 ### Coverage or Test Report
 
-[ADD COVERAGE OR TEST REPORT]
+Critical modules (`pipeline.py`, `text_filter.py`, `services/auth.py`, `routers/auth.py`) all have 30+% coverage.
+
+![Test Results](images/test-results.png)
 
 ### Additional QA Check Result
+
+Platform dependency manifests are dynamically checked against current security vulnerability directories.
 
 [ADD ADDITIONAL QA CHECK RESULT SCREENSHOT]
 
@@ -102,12 +110,12 @@ Authentification, roles separation, transcription improvement, localization.
 - [Definition of Done](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/definition-of-done.md)
 - [Quality Requirements](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/quality-requirements.md)
 - [Quality Requirement Tests Document](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/quality-requirements-tests.md)
-- [Testing Document](...) [INSERT LINK]
+- [Testing Document](docs/testing.md)
 - [User Acceptance Tests](https://github.com/SWP-Team20/Bilingual-speech-recognition/blob/main/docs/user-acceptance-tests.md)
-- [Unit Tests](...) [INSERT LINK]
-- [Integration Tests](...) [INSERT LINK]
-- [Automated Quality Requirement Tests](...) [INSERT LINK]
-- [CI Pipeline](...) [INSERT LINK]
+- [Unit Tests](scripts/Unit)
+- [Integration Tests](scripts/Integration)
+- [Automated Quality Requirement Tests](scripts/QualityRequirements)
+- [CI Pipeline](.github/workflows/quality-requirements-tests.yml)
 - [Latest Protected-Default-Branch CI Run](...) [INSERT LINK]
 
 ## Customer Meeting
