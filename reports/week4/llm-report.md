@@ -31,18 +31,6 @@ Claude was used to support the implementation of speech transcription functional
 
 As with previous assignments, all AI-generated code and recommendations were carefully reviewed, adapted and tested before being incorporated into the backend.
 
-## Documentation and Reporting
-
-**Tool Used:**
-
-- ChatGPT
-
-## How It Was Used
-
-ChatGPT was used while preparing project documentation and assignment reports. It helped review documents for clarity, grammar, and consistency. It was also used to check whether required sections were missing and to improve the structure of written reports.
-
-All generated text was reviewed and edited before being included in the repository. The team verified that the final documentation accurately reflected the work completed during the Sprint.
-
 ## Reflection on AI Usage
 
 During Week 4, AI continued to improve development efficiency by reducing debugging time and providing guidance on more complex implementation tasks, such as authentication, background task configuration, and speech transcription. However, AI suggestions were never accepted without verification. Team members remained responsible for evaluating, testing, and validating every solution before it became part of the project.
