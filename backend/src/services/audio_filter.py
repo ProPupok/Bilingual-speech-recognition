@@ -21,7 +21,10 @@ class CorpusFilters:
 
 
 def normalize_word(word: str) -> str:
-    return word.strip().lower()
+    """Нормализует слово так же, как при сохранении в БД (lang_tag._clean):
+    нижний регистр + только буквы. Это нужно, чтобы поисковый запрос
+    совпадал с уже очищенным от пунктуации Word.text."""
+    return "".join(ch for ch in word.lower() if ch.isalpha())
 
 
 def parse_date_from(value: str) -> datetime:
