@@ -182,62 +182,6 @@ async def get_all_transcriptions(
         })
     return result
 
-
-@router.patch("/audio/{audio_id}/name", response_model=schemas.AudioFileResponse)
-async def update_audio_name(
-    audio_id: str,
-    payload: schemas.UpdateAudioNameRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    try:
-        parsed_uuid = UUID(audio_id.strip())
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Некорректный формат ID")
-
-    audio = db.query(models.AudioFile).filter(models.AudioFile.id == parsed_uuid).first()
-    if not audio:
-        raise HTTPException(status_code=404, detail="Запись не найдена")
-
-    audio.filename = payload.filename
-
-    try:
-        db.commit()
-        db.refresh(audio)
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Ошибка при обновлении имени")
-
-    return audio
-
-
-@router.patch("/audio/{audio_id}/date", response_model=schemas.AudioFileResponse)
-async def update_audio_date(
-    audio_id: str,
-    payload: schemas.UpdateAudioDateRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    try:
-        parsed_uuid = UUID(audio_id.strip())
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Некорректный формат ID")
-
-    audio = db.query(models.AudioFile).filter(models.AudioFile.id == parsed_uuid).first()
-    if not audio:
-        raise HTTPException(status_code=404, detail="Запись не найдена")
-
-    audio.uploaded_at = payload.uploaded_at
-
-    try:
-        db.commit()
-        db.refresh(audio)
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Ошибка при обновлении даты")
-
-    return audio
-
 @router.get("/transcriptions/{audio_id}")
 async def get_transcription_by_id(
     audio_id: UUID,
@@ -311,6 +255,73 @@ async def upload_audio(
 
     return db_audio
 
+
+@router.patch("/audio/{audio_id}/name", response_model=schemas.AudioFileResponse)
+async def update_audio_name(
+    audio_id: str,
+    payload: schemas.UpdateAudioNameRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Недостаточно прав для выполнения этого действия"
+        )
+
+    try:
+        parsed_uuid = UUID(audio_id.strip())
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Некорректный формат ID")
+
+    audio = db.query(models.AudioFile).filter(models.AudioFile.id == parsed_uuid).first()
+    if not audio:
+        raise HTTPException(status_code=404, detail="Запись не найдена")
+
+    audio.filename = payload.filename
+
+    try:
+        db.commit()
+        db.refresh(audio)
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Ошибка при обновлении имени")
+
+    return audio
+
+
+@router.patch("/audio/{audio_id}/date", response_model=schemas.AudioFileResponse)
+async def update_audio_date(
+    audio_id: str,
+    payload: schemas.UpdateAudioDateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Недостаточно прав для выполнения этого действия"
+        )
+    
+    try:
+        parsed_uuid = UUID(audio_id.strip())
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Некорректный формат ID")
+
+    audio = db.query(models.AudioFile).filter(models.AudioFile.id == parsed_uuid).first()
+    if not audio:
+        raise HTTPException(status_code=404, detail="Запись не найдена")
+
+    audio.uploaded_at = payload.uploaded_at
+
+    try:
+        db.commit()
+        db.refresh(audio)
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Ошибка при обновлении даты")
+
+    return audio
 
 @router.patch("/audio/{audio_id}/processed", response_model=schemas.AudioFileResponse)
 async def update_processed_audio(
