@@ -23,12 +23,18 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    // Проверяем, был ли это запрос на логин
+    const isLoginRequest = error.config && error.config.url && error.config.url.includes('/api/v1/auth/login');
+
+    // Выкидываем пользователя ТОЛЬКО если это 401 ошибка И запрос был НЕ на логин
+    if (error.response && error.response.status === 401 && !isLoginRequest) {
       console.warn("[Auth] Session expired or invalid token. Redirecting...");
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
     }
+    
+    // Обязательно пробрасываем ошибку дальше, чтобы catch в AuthPage её поймал
     return Promise.reject(error);
   }
 );
