@@ -7,12 +7,15 @@ function AuthPage({ onLoginSuccess }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-const handleLoginSubmit = async (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (!username.trim() || !password.trim()) return;
+    e.stopPropagation(); // Предотвращаем всплытие события
+
+    // Если уже идет загрузка, игнорируем повторные клики
+    if (isLoading || !username.trim() || !password.trim()) return;
 
     setIsLoading(true);
-    setError('');
+    setError(''); // Сбрасываем старую ошибку ТОЛЬКО перед началом нового запроса
 
     try {
       const formData = new URLSearchParams();
@@ -28,14 +31,18 @@ const handleLoginSubmit = async (e) => {
       const data = response.data;
 
       localStorage.setItem('token', data.access_token);
-      onLoginSuccess();
-
+      
+      // Передаем управление родителю только при УСПЕШНОМ входе
+      onLoginSuccess(); 
+      
+    } catch (err) {
       console.error("Ошибка аутентификации:", err);
 
+      // Вытаскиваем ошибку из бэка, если она есть
       const errorMessage = err.response?.data?.detail || 'Неправильное имя пользователя или пароль.';
       setError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Кнопка снова активна, но стейт error НЕ трогаем
     }
   };
 
