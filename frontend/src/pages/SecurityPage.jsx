@@ -82,7 +82,7 @@ function SecurityPage({ onDeleteAccountConfirm }) {
       <button 
         onClick={() => navigate('/dashboard')} 
         style={{ 
-          background: 'none', border: 'none', color: '#773505', 
+          background: 'none', border: 'none', color: '#2e7d32', 
           fontWeight: 'bold', cursor: 'pointer', marginBottom: '24px', fontSize: '16px' 
         }}
       >
@@ -153,7 +153,7 @@ function SecurityPage({ onDeleteAccountConfirm }) {
             type="submit" 
             disabled={isLoading}
             style={{ 
-              backgroundColor: '#773505', color: '#fff', border: 'none', 
+              backgroundColor: '#2e7d32', color: '#fff', border: 'none', 
               padding: '12px 24px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px',
               opacity: isLoading ? 0.6 : 1
             }}

@@ -9,6 +9,7 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
   const [selectedTranscription, setSelectedTranscription] = useState('');
   const [selectedTranscriptionWords, setSelectedTranscriptionWords] = useState([]);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [totalStorageMb, setTotalStorageMb] = useState(null);
 
   useEffect(() => {
     loadAudioList();
@@ -24,6 +25,16 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
       setAudioList(data);
     } catch (error) {
       console.error("Ошибка загрузки аудио:", error);
+    }
+    loadTotalStorage();
+  };
+
+  const loadTotalStorage = async () => {
+    try {
+      const data = await audioApi.fetchTotalStorage();
+      setTotalStorageMb(data.total_allocated_mb);
+    } catch (error) {
+      console.error("Ошибка загрузки общего размера хранилища:", error);
     }
   };
 
@@ -63,8 +74,13 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', height: '100%', minHeight: 0 }}>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, height: '100%', alignItems: 'stretch' }}>
-        <div style={{ marginBottom: '20px', width: '100%', display: 'flex', justifyContent: 'flex-start', flexShrink: 0 }}>
-          <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0, padding: 0, textAlign: 'left' }}>Аудиозаписи</h2>
+        <div style={{ marginBottom: '20px', width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0, padding: 0, textAlign: 'left', lineHeight: 1 }}>Аудиозаписи</h2>
+          {totalStorageMb !== null && (
+            <span style={{ fontSize: '14px', fontWeight: '500', lineHeight: 1, color: '#2e7d32', backgroundColor: '#e8f5e9', padding: '4px 10px', borderRadius: '12px', whiteSpace: 'nowrap', transform: 'translateY(3px)' }}>
+              Всего: {totalStorageMb} МБ
+            </span>
+          )}
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '12px', boxSizing: 'border-box', width: '100%' }}>

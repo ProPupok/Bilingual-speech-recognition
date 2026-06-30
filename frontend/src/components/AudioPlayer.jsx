@@ -6,6 +6,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
   const [audioUrl, setAudioUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [sizeMb, setSizeMb] = useState(null);
 
   // Проверяем, является ли пользователь обычным юзером
   const isUserRole = userRole?.toLowerCase() === 'user';
@@ -70,6 +71,28 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
   };
 }, [audio.id, isAudioProcessing]);
 
+  // 3. STORAGE SIZE LOADING
+  useEffect(() => {
+    if (!audio.id || audio.isPending) return;
+
+    let isMounted = true;
+
+    const loadSize = async () => {
+      try {
+        const data = await audioApi.fetchAudioSizes(audio.id);
+        if (isMounted) setSizeMb(data.total_folder_mb);
+      } catch (error) {
+        console.error("Ошибка при загрузке размера аудио:", error);
+      }
+    };
+
+    loadSize();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [audio.id, audio.isPending, currentStatus]);
+
   if (isAudioProcessing) {
     return (
       <div style={{ marginBottom: '16px', width: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
@@ -80,7 +103,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
           Загрузка: {audio.filename || `Аудио ${index + 1}`}
         </div>
         <div style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '4px', border: '1px dashed #bbb', boxSizing: 'border-box' }}>
-          <div style={{ fontSize: '15px', color: '#773505', textAlign: 'center', fontWeight: 'bold', animation: 'pulseText 1.5s infinite ease-in-out' }}>
+          <div style={{ fontSize: '15px', color: '#2e7d32', textAlign: 'center', fontWeight: 'bold', animation: 'pulseText 1.5s infinite ease-in-out' }}>
             Аудио обрабатывается ИИ...
           </div>
         </div>
@@ -90,8 +113,13 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
 
   return (
     <div style={{ marginBottom: '16px', width: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
-      <div style={{ fontWeight: '500', textAlign: 'left', padding: 0, margin: '0 0 8px 0', color: '#000' }}>
-        Аудио {index + 1} ({audio.filename})
+      <div style={{ fontWeight: '500', textAlign: 'left', padding: 0, margin: '0 0 8px 0', color: '#000', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span>Аудио {index + 1} ({audio.filename})</span>
+        {sizeMb !== null && (
+          <span style={{ fontWeight: '400', fontSize: '13px', color: '#2e7d32', backgroundColor: '#e8f5e9', padding: '2px 8px', borderRadius: '10px', whiteSpace: 'nowrap' }}>
+            {sizeMb} МБ
+          </span>
+        )}
       </div>
 
       <div style={{ backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #ddd', boxSizing: 'border-box' }}>
@@ -132,7 +160,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
           disabled={!isFullyDone}
           style={{
             padding: '6px 12px',
-            backgroundColor: !isFullyDone ? '#e0e0e0' : (isSelected ? '#522504' : '#773505'),
+            backgroundColor: !isFullyDone ? '#e0e0e0' : (isSelected ? '#1b5e20' : '#2e7d32'),
             color: !isFullyDone ? '#757575' : 'white',
             border: 'none',
             borderRadius: '4px',

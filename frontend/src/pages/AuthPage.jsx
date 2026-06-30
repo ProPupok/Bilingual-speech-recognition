@@ -158,7 +158,7 @@ function AuthPage({ onLoginSuccess }) {
               disabled={!isFormValid}
               style={{
                 padding: '8px 24px',
-                backgroundColor: isFormValid ? '#522504' : '#bbb', 
+                backgroundColor: isFormValid ? '#1b5e20' : '#bbb', 
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',

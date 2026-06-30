@@ -76,7 +76,7 @@ function TranscriptionBox({ transcriptionText, transcriptionWords, sentences, au
           // Render via organized speaker sentences if available
           sentences.map((sentence, sIdx) => (
             <div key={sIdx} style={{ marginBottom: '14px', display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontWeight: 'bold', color: '#773505', fontSize: '14px', marginBottom: '2px' }}>
+              <span style={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '14px', marginBottom: '2px' }}>
                 {sentence.speaker || 'Неизвестный говорящий'}:
               </span>
               <p style={{ margin: 0, fontWeight: '500', color: '#333' }}>
@@ -120,7 +120,7 @@ function TranscriptionBox({ transcriptionText, transcriptionWords, sentences, au
 
             return paragraphs.map((p, pIdx) => (
               <div key={pIdx} style={{ marginBottom: '14px', display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontWeight: 'bold', color: '#773505', fontSize: '14px', marginBottom: '2px' }}>
+                <span style={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '14px', marginBottom: '2px' }}>
                   {p.speaker}:
                 </span>
                 <p style={{ margin: 0, fontWeight: '500' }}>

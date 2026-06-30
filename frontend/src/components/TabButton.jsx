@@ -14,7 +14,7 @@ function TabButton({ active, onClick, children }) {
         fontFamily: 'inherit',
         border: 'none',
         transition: 'all 0.2s ease',
-        backgroundColor: active ? '#522504' : '#e0e0e0',
+        backgroundColor: active ? '#1b5e20' : '#e0e0e0',
         color: active ? '#fff' : '#616161',
       }}
     >

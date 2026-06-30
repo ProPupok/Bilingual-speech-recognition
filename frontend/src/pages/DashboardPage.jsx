@@ -11,13 +11,21 @@ import AdminPanel from './AdminPanel';
 function DashboardPage({ onLogout }) {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState('');
-  const [activeTab, setActiveTab] = useState('audio');
+  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('activeTab') || 'audio');
   const [pendingUploads, setPendingUploads] = useState([]);
   const [uploadVersion, setUploadVersion] = useState(0);
 
   useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
     userApi.fetchProfile()
-      .then(data => setUserRole(data.role || 'user'))
+      .then(data => {
+        const role = data.role || 'user';
+        setUserRole(role);
+        if (activeTab === 'admin' && role !== 'admin') setActiveTab('audio');
+      })
       .catch(error => console.error("Ошибка загрузки данных пользователя:", error));
   }, []);
 

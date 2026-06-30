@@ -158,7 +158,7 @@ function AdminPanel() {
                   <div key={u.id || u.user_id} style={{ backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #ddd', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ textAlign: 'left' }}>
                       <div style={{ fontWeight: '500', fontSize: '16px', color: '#000' }}>
-                        {u.username} {isMe && <span style={{ color: '#773505', fontWeight: 'bold' }}>(Я)</span>}
+                        {u.username} {isMe && <span style={{ color: '#2e7d32', fontWeight: 'bold' }}>(Я)</span>}
                       </div>
                       <div style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
                         Роль: {translateRole(u.role)}
@@ -167,7 +167,7 @@ function AdminPanel() {
                     
                     {!isMe && (
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <button type="button" onClick={() => handleChangePassword(u.id || u.user_id)} style={{ padding: '6px 12px', backgroundColor: '#773505', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontWeight: '550' }}>Сменить пароль</button>
+                        <button type="button" onClick={() => handleChangePassword(u.id || u.user_id)} style={{ padding: '6px 12px', backgroundColor: '#2e7d32', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontWeight: '550' }}>Сменить пароль</button>
                         <button type="button" onClick={() => handleDeleteUser(u.id || u.user_id)} style={{ padding: '6px 12px', backgroundColor: '#d32f2f', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', fontWeight: '550' }}>Удалить</button>
                       </div>
                     )}
@@ -220,7 +220,7 @@ function AdminPanel() {
               disabled={isFormInvalid}
               style={{ 
                 padding: '8px 12px', 
-                backgroundColor: '#773505', 
+                backgroundColor: '#2e7d32', 
                 color: 'white', 
                 border: 'none', 
                 borderRadius: '4px', 
