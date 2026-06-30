@@ -30,7 +30,17 @@ function formatTime(seconds) {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuccess, userRole }) {
+// Recording date as DD.MM.YYYY (falls back to the upload date)
+function formatDate(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  return `${dd}.${mm}.${d.getFullYear()}`;
+}
+
+function AudioPlayer({ audio, isSelected, onTranscribeToggle, onDeleteSuccess, userRole }) {
   const [loading, setLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -55,6 +65,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
   const isAudioProcessing = statusIsAudioProcessing(currentStatus);
   const isTextProcessing = statusIsTextProcessing(currentStatus);
   const isFullyDone = isDone(currentStatus);
+  const displayDate = formatDate(audio.recorded_at || audio.uploaded_at);
 
   // Storage size (skips pending uploads)
   useEffect(() => {
@@ -100,7 +111,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
       <div style={{ width: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
         <style>{`@keyframes pulseText { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }`}</style>
         <div style={{ fontWeight: '500', margin: '0 0 8px 0', color: colors.textMuted }}>
-          Загрузка: {audio.name || audio.filename || `Аудио ${index + 1}`}
+          Загрузка: {audio.name || audio.filename || 'Аудиозапись'}
         </div>
         <div style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: radius.md, border: '1px dashed #bbb', boxSizing: 'border-box' }}>
           <div style={{ fontSize: '15px', color: colors.primary, textAlign: 'center', fontWeight: 'bold', animation: 'pulseText 1.5s infinite ease-in-out' }}>
@@ -117,7 +128,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
       <div style={{ marginBottom: '16px', width: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
         <style>{`@keyframes pulseText { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }`}</style>
         <div style={{ fontWeight: '500', margin: '0 0 8px 0', color: colors.textMuted }}>
-          Загрузка: {audio.filename || `Аудио ${index + 1}`}
+          Загрузка: {audio.filename || 'Аудиозапись'}
         </div>
         <div style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: radius.md, border: '1px dashed #bbb', boxSizing: 'border-box' }}>
           <div style={{ fontSize: '15px', color: colors.primary, textAlign: 'center', fontWeight: 'bold', animation: 'pulseText 1.5s infinite ease-in-out' }}>
@@ -133,11 +144,18 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
   return (
     <div style={{ marginBottom: '16px', width: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
       <style>{`@keyframes chevronPulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }`}</style>
-      <div style={{ fontWeight: '500', textAlign: 'left', padding: 0, margin: '0 0 8px 0', color: colors.text, display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span>Аудио {index + 1} ({audio.filename})</span>
-        {sizeMb !== null && (
-          <span style={{ fontWeight: '400', fontSize: '13px', color: colors.primary, backgroundColor: colors.primarySoft, padding: '2px 8px', borderRadius: radius.md, whiteSpace: 'nowrap' }}>
-            {sizeMb} МБ
+      <div style={{ margin: '0 0 8px 0', color: colors.text, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, fontWeight: '500' }}>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{audio.filename}</span>
+          {sizeMb !== null && (
+            <span style={{ flexShrink: 0, fontWeight: '400', fontSize: '13px', color: colors.primary, backgroundColor: colors.primarySoft, padding: '2px 8px', borderRadius: radius.md, whiteSpace: 'nowrap' }}>
+              {sizeMb} МБ
+            </span>
+          )}
+        </div>
+        {displayDate && (
+          <span style={{ flexShrink: 0, fontSize: '14px', fontWeight: '500', color: colors.textMuted, whiteSpace: 'nowrap' }}>
+            {displayDate}
           </span>
         )}
       </div>
@@ -287,7 +305,7 @@ function AudioPlayer({ audio, index, isSelected, onTranscribeToggle, onDeleteSuc
       <ConfirmDialog
         open={confirmOpen}
         title="Удалить аудиозапись?"
-        message={`Вы уверены, что хотите удалить "Аудио ${index + 1}"? Это действие нельзя отменить.`}
+        message={`Вы уверены, что хотите удалить «${audio.filename}»? Это действие нельзя отменить.`}
         confirmLabel="Удалить"
         cancelLabel="Отмена"
         danger

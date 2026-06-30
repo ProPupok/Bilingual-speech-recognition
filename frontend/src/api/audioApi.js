@@ -1,17 +1,27 @@
 import apiClient from './apiClient';
 
 export const audioApi = {
-  // Matches GET /api/v1/audio/
-  fetchAudioList: async () => {
-    const response = await apiClient.get('/api/v1/audio/');
+  // Matches GET /api/v1/audio/ (supports optional corpus filters)
+  fetchAudioList: async (filters = {}) => {
+    const params = {};
+    if (filters.word && filters.word.trim()) params.q = filters.word.trim();
+    if (filters.lang) params.lang = filters.lang;
+    if (filters.status) params.status = filters.status;
+    if (filters.speaker && filters.speaker.trim()) params.speaker = filters.speaker.trim();
+    if (filters.dateFrom) params.date_from = filters.dateFrom;
+    if (filters.dateTo) params.date_to = filters.dateTo;
+
+    const response = await apiClient.get('/api/v1/audio/', { params });
     return response.data;
   },
 
   // Matches POST /api/v1/upload-audio/
-  uploadAudioFile: async (file) => {
+  uploadAudioFile: async (file, { title, recordedAt } = {}) => {
     const formData = new FormData();
     formData.append('file', file);
-    
+    if (title) formData.append('title', title);
+    if (recordedAt) formData.append('recorded_at', recordedAt);
+
     const response = await apiClient.post('/api/v1/upload-audio/', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
