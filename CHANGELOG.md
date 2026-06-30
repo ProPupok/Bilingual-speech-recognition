@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Audio filtration by date in https://github.com/SWP-Team20/Bilingual-speech-recognition/pull/196
+
 ## [0.2.0] - 28.06.2026
 
 ### Added
