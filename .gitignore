@@ -1,9 +1,20 @@
 /.idea/
 /storage/
-/backend/src/__pycache__/
-/backend/src/routers/__pycache__/
-/backend/src/services/__pycache__/
 /node_modules/
 /spkrec_ecapa/
 .env
 .coverage
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# HTTPS dev certificates (never commit private keys)
+*.pem
+key.pem
+cert.pem

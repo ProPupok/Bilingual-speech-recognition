@@ -4,8 +4,10 @@ import shutil
 import logging
 from uuid import UUID, uuid4
 from typing import Annotated, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Query, Response, status, BackgroundTasks
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, File, Form, UploadFile, Query, Response, status, BackgroundTasks
 from fastapi.responses import FileResponse
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from backend.src import models, schemas
@@ -310,6 +312,8 @@ async def get_transcription_by_id(
 async def upload_audio(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
+    title: Optional[str] = Form(None),
+    recorded_at: Optional[str] = Form(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -318,6 +322,26 @@ async def upload_audio(
 
     if not file.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Файл должен быть аудиоформата")
+
+    recorded_at_dt = None
+    if recorded_at and recorded_at.strip():
+        try:
+            recorded_at_dt = datetime.fromisoformat(recorded_at.strip())
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Некорректный формат даты записи (ожидается ISO YYYY-MM-DD)")
+        if recorded_at_dt.date() > datetime.now().date():
+            raise HTTPException(status_code=400, detail="Дата записи не может быть позже сегодняшней")
+
+    display_name = title.strip() if title and title.strip() else file.filename
+
+    # Названия должны быть уникальными (без учёта регистра)
+    existing = (
+        db.query(models.AudioFile)
+        .filter(func.lower(models.AudioFile.filename) == display_name.lower())
+        .first()
+    )
+    if existing:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Аудиозапись с таким названием уже существует")
 
     audio_id = uuid4()
     folder_path = os.path.join(BASE_STORAGE_DIR, str(audio_id))
@@ -332,9 +356,10 @@ async def upload_audio(
 
     db_audio = models.AudioFile(
         id=audio_id,
-        filename=file.filename,
+        filename=display_name,
         content_type=file.content_type,
         folder_path=folder_path,
+        recorded_at=recorded_at_dt,
         status="processing_audio"
     )
     db.add(db_audio)

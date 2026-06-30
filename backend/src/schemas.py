@@ -9,6 +9,7 @@ class AudioFileResponse(BaseModel):
     filename: str
     folder_path: str
     uploaded_at: datetime
+    recorded_at: datetime | None = None
     status: str
 
     model_config = ConfigDict(from_attributes=True)
