@@ -7,12 +7,15 @@ function AuthPage({ onLoginSuccess }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-const handleLoginSubmit = async (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (!username.trim() || !password.trim()) return;
+    e.stopPropagation(); // Предотвращаем всплытие события
+
+    // Если уже идет загрузка, игнорируем повторные клики
+    if (isLoading || !username.trim() || !password.trim()) return;
 
     setIsLoading(true);
-    setError('');
+    setError(''); // Сбрасываем старую ошибку ТОЛЬКО перед началом нового запроса
 
     try {
       const formData = new URLSearchParams();
@@ -28,14 +31,18 @@ const handleLoginSubmit = async (e) => {
       const data = response.data;
 
       localStorage.setItem('token', data.access_token);
-      onLoginSuccess();
-
+      
+      // Передаем управление родителю только при УСПЕШНОМ входе
+      onLoginSuccess(); 
+      
+    } catch (err) {
       console.error("Ошибка аутентификации:", err);
 
+      // Вытаскиваем ошибку из бэка, если она есть
       const errorMessage = err.response?.data?.detail || 'Неправильное имя пользователя или пароль.';
       setError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Кнопка снова активна, но стейт error НЕ трогаем
     }
   };
 
@@ -57,10 +64,10 @@ const handleLoginSubmit = async (e) => {
         backgroundColor: '#fff', 
         width: '100%', 
         maxWidth: '540px', 
-        borderRadius: '4px', 
+        borderRadius: '16px', 
         padding: '60px 45px', 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.05)', 
-        border: '1px solid #ddd',
+        boxShadow: '0 18px 50px rgba(0,0,0,0.10)', 
+        border: '1px solid #ececec',
         textAlign: 'center',
         boxSizing: 'border-box'
       }}>
@@ -107,18 +114,21 @@ const handleLoginSubmit = async (e) => {
             value={username}
             disabled={isLoading}
             onChange={(e) => setUsername(e.target.value)}
+            onFocus={(e) => { e.currentTarget.style.borderColor = '#16a34a'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(22,163,74,0.15)'; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = '#ddd'; e.currentTarget.style.boxShadow = 'none'; }}
             style={{ 
               width: '100%', 
               height: '48px', 
               backgroundColor: '#fff', 
               border: '1px solid #ddd', 
-              borderRadius: '4px', 
+              borderRadius: '8px', 
               padding: '0 16px', 
               marginBottom: '20px', 
               fontSize: '16px', 
               color: '#000', 
               boxSizing: 'border-box',
               outline: 'none',
+              transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
               fontFamily: 'system-ui, sans-serif'
             }}
           />
@@ -129,18 +139,21 @@ const handleLoginSubmit = async (e) => {
             value={password}
             disabled={isLoading}
             onChange={(e) => setPassword(e.target.value)}
+            onFocus={(e) => { e.currentTarget.style.borderColor = '#16a34a'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(22,163,74,0.15)'; }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = '#ddd'; e.currentTarget.style.boxShadow = 'none'; }}
             style={{ 
               width: '100%', 
               height: '48px', 
               backgroundColor: '#fff', 
               border: '1px solid #ddd', 
-              borderRadius: '4px', 
+              borderRadius: '8px', 
               padding: '0 16px', 
               marginBottom: '30px', 
               fontSize: '16px', 
               color: '#000', 
               boxSizing: 'border-box',
               outline: 'none',
+              transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
               fontFamily: 'system-ui, sans-serif'
             }}
           />
@@ -149,12 +162,14 @@ const handleLoginSubmit = async (e) => {
             <button
               type="submit"
               disabled={!isFormValid}
+              onMouseEnter={(e) => { if (isFormValid) e.currentTarget.style.backgroundColor = '#166534'; }}
+              onMouseLeave={(e) => { if (isFormValid) e.currentTarget.style.backgroundColor = '#15803d'; }}
               style={{
-                padding: '8px 24px',
-                backgroundColor: isFormValid ? '#522504' : '#bbb', 
+                padding: '10px 28px',
+                backgroundColor: isFormValid ? '#15803d' : '#bbb', 
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px',
+                borderRadius: '8px',
                 cursor: isFormValid ? 'pointer' : 'not-allowed',
                 fontSize: '15px',
                 fontWeight: '500',
