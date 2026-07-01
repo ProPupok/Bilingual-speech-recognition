@@ -5,10 +5,11 @@
 Team follows an iterative development process organized into 1-week sprints. All work must be tracked via the project's Issue Tracker to ensure full traceability
 
 **Work Status Workflow:**
-1. **Backlog:** Task is defined, estimated, and prioritized
+1. **TO DO** Task is defined, estimated, and prioritized
 2. **In Progress:** The task is assigned to a developer; a dedicated feature branch is created
-3. **Review:** Code development is complete. A Pull/Merge Request is opened. Automated checks run, and peer reviews are conducted
-4. **Done:** The task meets the Definition of Done, the branch is merged into `main`, and the issue is closed
+3. **READY** The task is ready to be implemented
+4. **Review:** Code development is complete. A Pull/Merge Request is opened. Automated checks run, and peer reviews are conducted
+5. **Done:** The task meets the Definition of Done, the branch is merged into `main`, and the issue is closed
 
 ## 2. Definition of Done (DoD)
 
