@@ -29,7 +29,7 @@
   -  [Russian localization](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/130)
   -  [Profile account maintenance](https://github.com/SWP-Team20/Bilingual-speech-recognition/issues/131)
 
-  ## Sprint 3
+## Sprint 3
 
 - **Sprint name or number:** 3
 - **Link to the corresponding Sprint milestone:** [Sprint 3](https://github.com/SWP-Team20/Bilingual-speech-recognition/milestone/3)
