@@ -10,7 +10,7 @@ import { isTerminal } from '../constants/status';
 
 const EMPTY_FILTERS = { word: '', lang: '', speaker: '', status: '', dateFrom: '', dateTo: '' };
 
-function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
+function AudioPanel({ userRole, pendingUploads, uploadVersion, searchQuery = '' }) {
   const [audioList, setAudioList] = useState([]);
   const [selectedAudioId, setSelectedAudioId] = useState(null);
   const [selectedTranscription, setSelectedTranscription] = useState('');
@@ -36,7 +36,7 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
 
   useEffect(() => {
     loadAudioList();
-  }, []);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (uploadVersion > 0) loadAudioList();
@@ -68,7 +68,9 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
   const loadAudioList = async ({ silent = false, filters: filtersArg } = {}) => {
     const activeFilters = filtersArg ?? filtersRef.current;
     try {
-      const data = await audioApi.fetchAudioList(activeFilters);
+      const data = searchQuery
+        ? await audioApi.searchByFilename(searchQuery)
+        : await audioApi.fetchAudioList(activeFilters);
       setAudioList(data);
     } catch (error) {
       console.error("Ошибка загрузки аудио:", error);
@@ -334,8 +336,14 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
               </>
             ) : isEmpty ? (
               <div style={{ padding: '48px 24px', textAlign: 'center', color: colors.textFaint, border: `2px dashed ${colors.disabledBg}`, borderRadius: radius.md }}>
-                <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '6px', color: colors.textMuted }}>Пока нет аудиозаписей</div>
-                <div style={{ fontSize: '14px' }}>Загрузите первую аудиозапись, чтобы начать.</div>
+                <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '6px', color: colors.textMuted }}>
+                  {searchQuery ? 'Ничего не найдено' : 'Пока нет аудиозаписей'}
+                </div>
+                <div style={{ fontSize: '14px' }}>
+                  {searchQuery
+                    ? 'Попробуйте изменить запрос или очистить поле поиска.'
+                    : 'Загрузите первую аудиозапись, чтобы начать.'}
+                </div>
               </div>
             ) : (
               combinedAudioList.map((audio) => (
