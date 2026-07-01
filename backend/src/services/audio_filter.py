@@ -53,8 +53,10 @@ def apply_word_corpus_filters(query: Query, filters: CorpusFilters) -> Query:
     if filters.lang:
         query = query.filter(models.Word.language == filters.lang)
     if filters.speaker:
-        query = query.join(models.Speaker, models.Speaker.id == models.Word.speaker_id)
-        query = query.filter(models.Speaker.label == filters.speaker)
+        term = filters.speaker.strip()
+        if term:
+            query = query.join(models.Speaker, models.Speaker.id == models.Word.speaker_id)
+            query = query.filter(models.Speaker.label.ilike(f"%{term}%"))
     return query
 
 

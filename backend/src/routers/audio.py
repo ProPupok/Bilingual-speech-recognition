@@ -16,6 +16,7 @@ from backend.src.models import User, UserRole
 from backend.src.dependencies import get_current_user
 import backend.src.pipeline as pipeline
 from backend.src.services.audio_filter import CorpusFilters, filter_audio_files, filter_word_hits
+from backend.src import db_index
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -79,7 +80,7 @@ def get_folder_size(folder_path: str) -> int:
 def get_corpus_filters(
     q: Optional[str] = Query(None, description="Слово (точное совпадение нормализованного text)"),
     lang: Optional[str] = Query(None, description="Язык слова: ru / tt / unknown"),
-    speaker: Optional[str] = Query(None, description="Метка говорящего (мама / папа / …)"),
+    speaker: Optional[str] = Query(None, description="Фрагмент метки говорящего (например: мама, Говорящий 1)"),
     date_from: Optional[str] = Query(None, description="Дата записи с (ISO YYYY-MM-DD)"),
     date_to: Optional[str] = Query(None, description="Дата записи по, включительно (ISO YYYY-MM-DD)"),
     status: Optional[str] = Query(None, description="Статус обработки: done / processing / error / …"),
@@ -449,6 +450,32 @@ async def update_transcription(
         "filename": audio.filename,
         "transcription_text": payload.transcription_text
     }
+
+
+@router.post("/audio/{audio_id}/reindex-db", status_code=status.HTTP_204_NO_CONTENT)
+async def reindex_audio_db(
+    audio_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Переиндексировать слова и спикеров из transcription.json в БД (для уже обработанных записей)."""
+    if current_user.role not in [UserRole.ADMIN, UserRole.MANAGER]:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
+
+    audio = db.query(models.AudioFile).filter(models.AudioFile.id == audio_id).first()
+    if not audio:
+        raise HTTPException(status_code=404, detail="Запись не найдена")
+
+    try:
+        db_index.reindex_from_json(db, audio_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Не удалось переиндексировать запись")
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 
 @router.delete("/audio/{audio_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_audio(
