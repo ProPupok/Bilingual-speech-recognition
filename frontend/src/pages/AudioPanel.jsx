@@ -27,7 +27,7 @@ function countActiveFilters(filters) {
   return count;
 }
 
-function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
+function AudioPanel({ userRole, pendingUploads, uploadVersion, searchQuery = '' }) {
   const [audioList, setAudioList] = useState([]);
   const [selectedAudioId, setSelectedAudioId] = useState(null);
   const [selectedTranscription, setSelectedTranscription] = useState('');
@@ -53,7 +53,7 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
 
   useEffect(() => {
     loadAudioList();
-  }, []);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (uploadVersion > 0) loadAudioList();
@@ -85,7 +85,9 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
   const loadAudioList = async ({ silent = false, filters: filtersArg } = {}) => {
     const activeFilters = filtersArg ?? filtersRef.current;
     try {
-      const data = await audioApi.fetchAudioList(activeFilters);
+      const data = searchQuery
+        ? await audioApi.searchByFilename(searchQuery)
+        : await audioApi.fetchAudioList(activeFilters);
       setAudioList(data);
     } catch (error) {
       console.error("Ошибка загрузки аудио:", error);
@@ -193,13 +195,14 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
   const currentAudioName = selectedAudio ? selectedAudio.filename : '';
   const combinedAudioList = [...pendingUploads, ...audioList];
   const isEmpty = !isInitialLoading && combinedAudioList.length === 0;
+  const showTranscriptionColumn = !isNarrow || selectedAudioId;
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr', gap: isNarrow ? '28px' : '48px', height: isNarrow ? 'auto' : '100%', minHeight: 0 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, height: isNarrow ? 'auto' : '100%', alignItems: 'stretch' }}>
-        <div style={{ marginBottom: '20px', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-            <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0, padding: 0, textAlign: 'left', lineHeight: 1 }}>Аудиозаписи</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, height: isNarrow ? 'auto' : '100%', alignItems: 'stretch', order: isNarrow ? 2 : undefined }}>
+        <div style={{ marginBottom: '20px', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: isNarrow ? 'flex-start' : 'center', gap: '12px', flexShrink: 0, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flexWrap: 'wrap' }}>
+            <h2 style={{ fontSize: isNarrow ? '22px' : '28px', fontWeight: 'bold', margin: 0, padding: 0, textAlign: 'left', lineHeight: 1 }}>Аудиозаписи</h2>
             {totalStorageMb !== null && (
               <span style={{ fontSize: '14px', fontWeight: '500', lineHeight: 1, color: colors.primary, backgroundColor: colors.primarySoft, padding: '4px 10px', borderRadius: radius.lg, whiteSpace: 'nowrap', transform: 'translateY(3px)' }}>
                 Всего: {totalStorageMb} МБ
@@ -241,7 +244,8 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
                 aria-label="Фильтры аудиозаписей"
                 style={{
                   position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 50,
-                  width: '300px', maxWidth: 'calc(100vw - 48px)',
+                  width: isNarrow ? 'min(300px, calc(100vw - 32px))' : '300px',
+                  maxWidth: isNarrow ? 'calc(100vw - 32px)' : 'calc(100vw - 48px)',
                   backgroundColor: colors.surface, border: `1px solid ${colors.border}`,
                   borderRadius: radius.lg, boxShadow: shadow.lg, padding: '18px',
                   boxSizing: 'border-box', textAlign: 'left',
@@ -380,8 +384,14 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
               </>
             ) : isEmpty ? (
               <div style={{ padding: '48px 24px', textAlign: 'center', color: colors.textFaint, border: `2px dashed ${colors.disabledBg}`, borderRadius: radius.md }}>
-                <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '6px', color: colors.textMuted }}>Пока нет аудиозаписей</div>
-                <div style={{ fontSize: '14px' }}>Загрузите первую аудиозапись, чтобы начать.</div>
+                <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '6px', color: colors.textMuted }}>
+                  {searchQuery ? 'Ничего не найдено' : 'Пока нет аудиозаписей'}
+                </div>
+                <div style={{ fontSize: '14px' }}>
+                  {searchQuery
+                    ? 'Попробуйте изменить запрос или очистить поле поиска.'
+                    : 'Загрузите первую аудиозапись, чтобы начать.'}
+                </div>
               </div>
             ) : (
               combinedAudioList.map((audio) => (
@@ -400,12 +410,13 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, height: isNarrow ? 'auto' : '100%', alignItems: 'stretch' }}>
-        <div style={{ flex: 1, height: isNarrow ? 'auto' : '100%', minHeight: isNarrow ? '240px' : 0, width: '100%' }}>
+      {showTranscriptionColumn && (
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0, height: isNarrow ? 'auto' : '100%', alignItems: 'stretch', order: isNarrow ? 1 : undefined }}>
+        <div style={{ flex: 1, height: isNarrow ? 'auto' : '100%', minHeight: 0, width: '100%' }}>
           {selectedAudioId ? (
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: isNarrow ? 'auto' : '100%', width: '100%' }}>
               <div style={{ marginBottom: '20px', width: '100%', display: 'flex', justifyContent: 'flex-start', flexShrink: 0 }}>
-                <h2 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0, padding: 0, textAlign: 'left' }}>Транскрипция</h2>
+                <h2 style={{ fontSize: isNarrow ? '22px' : '28px', fontWeight: 'bold', margin: 0, padding: 0, textAlign: 'left' }}>Транскрипция</h2>
               </div>
               <TranscriptionBox
                 transcriptionText={selectedTranscription}
@@ -415,12 +426,13 @@ function AudioPanel({ userRole, pendingUploads, uploadVersion }) {
               />
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: isNarrow ? '200px' : 'auto', color: colors.waveformScrub, border: `2px dashed ${colors.disabledBg}`, borderRadius: radius.md, padding: '24px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: colors.waveformScrub, border: `2px dashed ${colors.disabledBg}`, borderRadius: radius.md, padding: '24px', textAlign: 'center' }}>
               Выберите аудиозапись для просмотра транскрипции
             </div>
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }

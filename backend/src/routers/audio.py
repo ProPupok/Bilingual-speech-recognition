@@ -126,6 +126,25 @@ async def get_all_audio(
     return filter_audio_files(query, filters).all()
 
 
+@router.get("/audio/by-filename", response_model=List[schemas.AudioFileResponse])
+async def get_audio_by_filename(
+    filename: str = Query(..., min_length=1, description="Фрагмент названия аудиозаписи (поле filename в БД)"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Найти аудиозаписи, в названии которых есть указанный фрагмент (без учёта регистра)."""
+    name = filename.strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Название не может быть пустым")
+
+    return (
+        db.query(models.AudioFile)
+        .filter(models.AudioFile.filename.ilike(f"%{name}%"))
+        .order_by(models.AudioFile.uploaded_at.desc())
+        .all()
+    )
+
+
 @router.get("/audio/{audio_id}")
 async def get_audio_by_id(
         audio_id: str,
