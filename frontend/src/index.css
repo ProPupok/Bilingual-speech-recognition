@@ -52,6 +52,14 @@
 
 body {
   margin: 0;
+  overflow-x: hidden;
+}
+
+.audio-search-input::placeholder {
+  color: #888888;
+  font-family: system-ui, sans-serif;
+  font-weight: bold;
+  opacity: 1;
 }
 
 #root {

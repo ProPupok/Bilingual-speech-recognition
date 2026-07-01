@@ -47,6 +47,14 @@ export const audioApi = {
     return response.data;
   },
 
+  // Matches GET /api/v1/audio/by-filename
+  searchByFilename: async (filename) => {
+    const response = await apiClient.get('/api/v1/audio/by-filename', {
+      params: { filename: filename.trim() },
+    });
+    return response.data;
+  },
+
   // Matches POST /api/v1/upload-audio/
   uploadAudioFile: async (file, { title, recordedAt } = {}) => {
     const formData = new FormData();
